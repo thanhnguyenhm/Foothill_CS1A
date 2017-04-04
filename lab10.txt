@@ -1,0 +1,273 @@
+/*Source code for Lab assignment 10
+ Written by Thanh Nguyen 11/27/15*/
+
+public class Foothill
+{
+   public static void main(String[] args)
+   {
+      //establish one set of min/max values
+      Point.setRange(30, 20); //first attempt failed
+      Point.setRange(-20, 20);
+      
+      //create 8 Point objects
+      Point[] points = new Point[8];
+      points[0] = new Point(21, -100, 55); //out-of-range values
+      points[0].displayPoint(); //values has been rejected and set to default
+       
+      points[1] = new Point();
+      points[1].set(-9,  -3.5,  0);
+      
+      points[2] = new Point(-18.2, 6, 2.1);
+      points[3] = new Point(0, -10, 7.8);
+      points[4] = new Point(8.1, 2.5, -1);
+      points[5] = new Point(3.2, 2, 0);
+      points[6] = new Point(-7, 3.7, -10);
+      points[7] = new Point(7, 7, 7);
+      
+      //create 3 arrays of x, y, z for first solid
+      double[] xValues = new double[8];
+      double[] yValues = new double[8];
+      double[] zValues = new double[8];
+      for(int i = 0; i < 5; i++)
+      {
+         xValues[i] = points[i].getX();
+         yValues[i] = points[i].getY();
+         zValues[i] = points[i].getZ();
+      }
+      
+      //instantiate first Solid
+      Solid solid1 = new Solid(5, xValues, yValues, zValues);
+      System.out.println("\n\nFirst Solid: ");
+      solid1.showSolid();
+      
+      //arrays for second solid
+      for(int i = 5, k = 0; k < 3; i++, k++)
+      {
+         xValues[k] = points[i].getX();
+         yValues[k] = points[i].getY();
+         zValues[k] = points[i].getZ();
+      }
+
+      //instantiate second Solid
+      Solid solid2 = new Solid(3, xValues, yValues, zValues);
+      System.out.println("\nSecond Solid: ");
+      solid2.showSolid();
+      
+      //instantiate third solid using default constructor
+      Solid solid3 = new Solid();
+      System.out.println("\nThird Solid: ");
+      solid3.addPoint(5.5, -2, 8.2);
+      solid3.addPoint(-9, -5.8, 3.1);
+      solid3.addPoint(points[3]);
+      solid3.showSolid();
+      
+      //make changes to the second solid     
+      double[] xArr = {20, -18.0}; //create 3 arrays for x, y, z
+      double[] yArr = {5, 21.3}; //invalid value. set to default
+      double[] zArr = {-6.2, 7.9};  
+      solid2.setPoints(2, xArr, yArr, zArr);
+      solid2.addPoint(1, 0, 1);
+      System.out.println("\nSecond Solid version 2: ");
+      solid2.showSolid();    
+      
+      //make changes to the third solid
+      double[] xArr2 = {1.5, 2.0}; //create 3 arrays for x, y, z
+      double[] yArr2 = {3, -7.4}; 
+      double[] zArr2 = {7.5, -8.1};     
+      
+      solid3.setPoints(22, xArr2, yArr2, zArr2); //illegal numPoint
+
+      solid3.setPoints(2, xArr2, yArr2, zArr2); //correct numPoint
+      System.out.println("\nThird Solid version 2: ");
+      solid3.showSolid();
+   }
+}
+
+class Point
+{
+   //private instance members
+   private double x;
+   private double y;
+   private double z;
+   
+   //private members
+   private static double MIN_VAL = -10.0;
+   private static double MAX_VAL = +10.0;
+   private static double DEFAULT_VAL = (MIN_VAL + MAX_VAL) / 2;
+   
+   //default constructor
+   Point()
+   {
+      x = DEFAULT_VAL;
+      y = DEFAULT_VAL;
+      z = DEFAULT_VAL;
+   }
+   
+   //parameter-taking constructor
+   Point(double x, double y, double z)
+   {
+      if(!set(x, y, z))
+      {
+         this.x = DEFAULT_VAL;
+         this.y = DEFAULT_VAL;
+         this.z = DEFAULT_VAL;         
+      }   
+   }
+   
+   //mutator
+   boolean set(double x, double y, double z)
+   {
+      if(x < MIN_VAL || x > MAX_VAL ||
+         y < MIN_VAL || y > MAX_VAL ||
+         z < MIN_VAL || z > MAX_VAL)
+      {
+         System.out.println("\nOut of range from " + MIN_VAL
+               + " to " + MAX_VAL + ". Default values have been used.");
+         return false;
+      }
+           
+      this.x = x;   
+      this.y = y;
+      this.z = z;      
+      return true;
+   }
+   
+   //accessors
+   double getX() { return x; }
+   double getY() { return y; }
+   double getZ() { return z; }
+   
+   //display point in form (x, y, z)
+   void displayPoint()
+   {
+      System.out.print("(" + getX() + ", " + getY() + ", " + getZ() + ")");
+   }
+   
+   //static method
+   static boolean setRange(double newMinVal, double newMaxVal)
+   {
+      if(newMinVal < newMaxVal)
+      {
+         MIN_VAL = newMinVal;
+         MAX_VAL = newMaxVal;
+         System.out.println("New range has been set. Range[" + MIN_VAL + ", "
+               + "" + MAX_VAL + "]");  
+         return true;
+      }      
+      System.out.println("Invalid min/max. Failed to set new range. Range["
+            + MIN_VAL + ", " + MAX_VAL + "]");      
+      return false;
+   }
+}
+
+class Solid
+{
+   //private instance members
+   private int numPoints;
+   private Point[] points = new Point[MAX_POINTS];
+   
+   //public static member
+   static final int MAX_POINTS = 20;
+   
+   //default constructor
+   Solid()
+   {
+      numPoints = 0;
+   }
+   
+   //parameter-taking constructor
+   Solid(int numPoints, double[] xArray, double[] yArray, double[] zArray)
+   {
+      if(!setPoints(numPoints, xArray, yArray, zArray))
+      {         
+         numPoints = 0;
+      }
+   }
+   
+   //mutator
+   boolean setPoints(int numPoints, double[] xValues, 
+         double[] yValues, double[] zValues)
+   {
+      this.numPoints = numPoints;     
+      if(numPoints < 0  || this.points.length < numPoints 
+            || numPoints > MAX_POINTS)
+      {
+         System.out.println("\nInvalid number of points.");
+         numPoints = 0;
+         return false;
+      }         
+      else
+      {
+         for(int k = 0; k < numPoints; k++)
+         {
+            this.points[k] = new Point();
+            this.points[k].set(xValues[k], yValues[k], zValues[k]);           
+         }
+         return true;
+      }
+   }
+   
+   //display points in a solid
+   void showSolid()
+   {     
+      for(int k = 0; k < numPoints; k++)
+      {
+         points[k].displayPoint();
+         System.out.print(", ");
+      }
+      System.out.println();
+   }
+   
+   boolean addPoint(double x, double y, double z)
+   {
+      if(numPoints < MAX_POINTS)
+      {
+         points[numPoints] = new Point();
+         points[numPoints].set(x, y, z);
+         numPoints++;
+         return true;
+      }
+      System.out.println("There's no room in solid");
+      return false;
+   }
+   
+   boolean addPoint(Point p)
+   {
+      if(numPoints < MAX_POINTS)
+      {
+         points[numPoints] = new Point();
+         points[numPoints].set(p.getX(), p.getY(), p.getZ());
+         numPoints++;
+         return true;
+      }
+      System.out.println("There's no room in solid");
+      return false;
+   }
+}
+
+/*****************SAMPLE RUN*************************
+ * Invalid min/max. Failed to set new range. Range[-10.0, 10.0]
+New range has been set. Range[-20.0, 20.0]
+
+Out of range from -20.0 to 20.0. Default values have been used.
+(0.0, 0.0, 0.0)
+
+First Solid: 
+(0.0, 0.0, 0.0), (-9.0, -3.5, 0.0), (-18.2, 6.0, 2.1), (0.0, -10.0, 7.8), (8.1, 2.5, -1.0), 
+
+Second Solid: 
+(3.2, 2.0, 0.0), (-7.0, 3.7, -10.0), (7.0, 7.0, 7.0), 
+
+Third Solid: 
+(5.5, -2.0, 8.2), (-9.0, -5.8, 3.1), (0.0, -10.0, 7.8), 
+
+Out of range from -20.0 to 20.0. Default values have been used.
+
+Second Solid version 2: 
+(20.0, 5.0, -6.2), (0.0, 0.0, 0.0), (1.0, 0.0, 1.0), 
+
+Invalid number of points.
+
+Third Solid version 2: 
+(1.5, 3.0, 7.5), (2.0, -7.4, -8.1), 
+**************END SAMPLE RUN******************************/

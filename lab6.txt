@@ -1,0 +1,354 @@
+/*Source code for Assignment Lab 6
+Written by Thanh Nguyen 11/01/15*/
+
+import java.util.Scanner;
+
+public class Foothill
+{
+   //constant variables for symbols
+   final static String MOST_FREQUENT = "BAR";
+   final static String REG_FREQUENT = "cherries";
+   final static String LESS_FREQUENT_1 = "(space)";
+   final static String LESS_FREQUENT_2 = "7";
+   
+   public static void main(String[] args)
+   {           
+      //declare variables
+      int bet, winnings;      
+      TripleString pullString;
+      
+      bet = getBet();
+      
+      while(bet != 0 )
+      {         
+         pullString = pull();
+         winnings = bet * getPayMultiplier(pullString);
+         display(pullString, winnings);          
+         bet = getBet();
+      }
+      
+      System.out.println("Game over. Goodbye!");
+   }
+   
+   public static void display(TripleString thePull, int winnings)
+   {
+      System.out.println("whirrrrrr .... and your pull is ... ");
+      System.out.println(thePull.getStr1() + " "
+            + thePull.getStr2() + " " + thePull.getStr3());
+      if(winnings == 0)
+         System.out.println("sorry, you lose.\n");
+      else
+         System.out.println("congratulations, you win: " + winnings + "\n");
+   }
+
+   public static int getPayMultiplier(TripleString myPull)
+   {
+      int payRate;
+      
+      if(myPull.getStr1() == REG_FREQUENT)
+         if(myPull.getStr2() == REG_FREQUENT)
+            if(myPull.getStr3() == REG_FREQUENT)
+               payRate = 30;
+            else
+               payRate = 15;
+         else
+            payRate = 5;      
+      else if(myPull.getStr1() == MOST_FREQUENT &&
+              myPull.getStr2() == MOST_FREQUENT &&
+              myPull.getStr3() == MOST_FREQUENT)
+         payRate = 50;
+      else if(myPull.getStr1() == LESS_FREQUENT_2 &&
+              myPull.getStr2() == LESS_FREQUENT_2 &&
+              myPull.getStr3() == LESS_FREQUENT_2)
+         payRate = 100;
+      else
+         payRate = 0;
+         
+      return payRate;         
+   }
+
+   public static int getBet()
+   {
+      int myBet;
+      Scanner input = new Scanner(System.in);
+      
+      do
+      {
+         System.out.print("How much would you like to bet 1 - 100"
+               + " (or 0 to quit?) ");
+         myBet = input.nextInt();
+      }
+      while (myBet < 0 || myBet > 100);
+                 
+      return myBet;
+   }
+   
+   public static TripleString pull()
+   {
+      TripleString myPull;
+      myPull = new TripleString(); 
+      
+      myPull.setStr1(randString());
+      myPull.setStr2(randString());
+      myPull.setStr3(randString());
+      
+      return myPull;
+   }
+   
+   private static String randString()
+   {
+      int num;
+      String myStr;
+      
+      num = (int)(Math.random() * 200) + 1;
+      
+      if(num >= 1 && num <= 100)
+         myStr = MOST_FREQUENT;
+      else if(num <= 150)
+         myStr = REG_FREQUENT;
+      else if(num <= 175)
+         myStr = LESS_FREQUENT_1;
+      else
+         myStr = LESS_FREQUENT_2;
+      
+      return myStr;
+   }
+}
+
+class TripleString
+{
+   //static constant
+   public static final int MAX_LEN = 20;
+   
+   //member data
+   private String string1;
+   private String string2;
+   private String string3;  
+   
+   //default constructor
+   TripleString()
+   {
+      string1 = "";
+      string2 = "";
+      string3 = "";
+   }
+   
+   private boolean validString(String str)
+   {
+      if(str != null && str.length() <= MAX_LEN)
+         return true;
+      else
+         return false;
+   }
+   
+   //mutator methods
+   
+   public boolean setStr1(String myStr)
+   {
+      if(!validString(myStr))
+         return false;
+      string1 = myStr;
+      return true;
+   }
+   
+   public boolean setStr2(String myStr)
+   {
+      if(!validString(myStr))
+         return false;
+      string2 = myStr;
+      return true;
+   }
+   
+   public boolean setStr3(String myStr)
+   {
+      if(!validString(myStr))
+         return false;
+      string3 = myStr;
+      return true;
+   }
+   
+   
+   //accessor methods
+   
+   public String getStr1()
+   {
+      return string1;
+   }
+   
+   public String getStr2()
+   {
+      return string2;
+   }
+   
+   public String getStr3()
+   {
+      return string3;
+   }
+}
+
+/********************SAMPLE RUN**********************
+How much would you like to bet 1 - 100 (or 0 to quit?) 10
+whirrrrrr .... and your pull is ... 
+BAR (space) BAR
+sorry, you lose.
+
+How much would you like to bet 1 - 100 (or 0 to quit?) -1
+How much would you like to bet 1 - 100 (or 0 to quit?) 101
+How much would you like to bet 1 - 100 (or 0 to quit?) 222
+How much would you like to bet 1 - 100 (or 0 to quit?) 100
+whirrrrrr .... and your pull is ... 
+BAR BAR BAR
+congratulations, you win: 5000
+
+How much would you like to bet 1 - 100 (or 0 to quit?) 60
+whirrrrrr .... and your pull is ... 
+BAR BAR cherries
+sorry, you lose.
+
+How much would you like to bet 1 - 100 (or 0 to quit?) 50
+whirrrrrr .... and your pull is ... 
+BAR BAR (space)
+sorry, you lose.
+
+How much would you like to bet 1 - 100 (or 0 to quit?) 10
+whirrrrrr .... and your pull is ... 
+BAR cherries cherries
+sorry, you lose.
+
+How much would you like to bet 1 - 100 (or 0 to quit?) 10
+whirrrrrr .... and your pull is ... 
+BAR (space) BAR
+sorry, you lose.
+
+How much would you like to bet 1 - 100 (or 0 to quit?) 20
+whirrrrrr .... and your pull is ... 
+BAR cherries BAR
+sorry, you lose.
+
+How much would you like to bet 1 - 100 (or 0 to quit?) 30
+whirrrrrr .... and your pull is ... 
+BAR cherries BAR
+sorry, you lose.
+
+How much would you like to bet 1 - 100 (or 0 to quit?) 70
+whirrrrrr .... and your pull is ... 
+7 BAR 7
+sorry, you lose.
+
+How much would you like to bet 1 - 100 (or 0 to quit?) 10
+whirrrrrr .... and your pull is ... 
+BAR 7 BAR
+sorry, you lose.
+
+How much would you like to bet 1 - 100 (or 0 to quit?) 5
+whirrrrrr .... and your pull is ... 
+cherries BAR (space)
+congratulations, you win: 25
+
+How much would you like to bet 1 - 100 (or 0 to quit?) 10
+whirrrrrr .... and your pull is ... 
+(space) 7 BAR
+sorry, you lose.
+
+How much would you like to bet 1 - 100 (or 0 to quit?) 16
+whirrrrrr .... and your pull is ... 
+cherries BAR cherries
+congratulations, you win: 80
+
+How much would you like to bet 1 - 100 (or 0 to quit?) 17
+whirrrrrr .... and your pull is ... 
+7 cherries BAR
+sorry, you lose.
+
+How much would you like to bet 1 - 100 (or 0 to quit?) 18
+whirrrrrr .... and your pull is ... 
+cherries (space) BAR
+congratulations, you win: 90
+
+How much would you like to bet 1 - 100 (or 0 to quit?) 19
+whirrrrrr .... and your pull is ... 
+BAR BAR cherries
+sorry, you lose.
+
+How much would you like to bet 1 - 100 (or 0 to quit?) -20
+How much would you like to bet 1 - 100 (or 0 to quit?) 21
+whirrrrrr .... and your pull is ... 
+BAR cherries BAR
+sorry, you lose.
+
+How much would you like to bet 1 - 100 (or 0 to quit?) 22
+whirrrrrr .... and your pull is ... 
+BAR BAR (space)
+sorry, you lose.
+
+How much would you like to bet 1 - 100 (or 0 to quit?) 23
+whirrrrrr .... and your pull is ... 
+cherries BAR cherries
+congratulations, you win: 115
+
+How much would you like to bet 1 - 100 (or 0 to quit?) 24
+whirrrrrr .... and your pull is ... 
+cherries BAR cherries
+congratulations, you win: 120
+
+How much would you like to bet 1 - 100 (or 0 to quit?) 25
+whirrrrrr .... and your pull is ... 
+BAR BAR cherries
+sorry, you lose.
+
+How much would you like to bet 1 - 100 (or 0 to quit?) 10
+whirrrrrr .... and your pull is ... 
+BAR BAR BAR
+congratulations, you win: 500
+
+How much would you like to bet 1 - 100 (or 0 to quit?) 27
+whirrrrrr .... and your pull is ... 
+7 cherries (space)
+sorry, you lose.
+
+How much would you like to bet 1 - 100 (or 0 to quit?) 28
+whirrrrrr .... and your pull is ... 
+BAR BAR BAR
+congratulations, you win: 1400
+
+How much would you like to bet 1 - 100 (or 0 to quit?) 29
+whirrrrrr .... and your pull is ... 
+BAR BAR (space)
+sorry, you lose.
+
+How much would you like to bet 1 - 100 (or 0 to quit?) 30
+whirrrrrr .... and your pull is ... 
+BAR (space) cherries
+sorry, you lose.
+
+How much would you like to bet 1 - 100 (or 0 to quit?) 31
+whirrrrrr .... and your pull is ... 
+BAR BAR BAR
+congratulations, you win: 1550
+
+How much would you like to bet 1 - 100 (or 0 to quit?) -32
+How much would you like to bet 1 - 100 (or 0 to quit?) 33
+whirrrrrr .... and your pull is ... 
+BAR 7 BAR
+sorry, you lose.
+
+How much would you like to bet 1 - 100 (or 0 to quit?) 34
+whirrrrrr .... and your pull is ... 
+BAR cherries (space)
+sorry, you lose.
+
+How much would you like to bet 1 - 100 (or 0 to quit?) 35
+whirrrrrr .... and your pull is ... 
+cherries BAR BAR
+congratulations, you win: 175
+
+How much would you like to bet 1 - 100 (or 0 to quit?) 36
+whirrrrrr .... and your pull is ... 
+7 BAR 7
+sorry, you lose.
+
+How much would you like to bet 1 - 100 (or 0 to quit?) -37
+How much would you like to bet 1 - 100 (or 0 to quit?) -1000
+How much would you like to bet 1 - 100 (or 0 to quit?) 0
+Game over. Goodbye!
+************END SAMPLE RUN*********************************/

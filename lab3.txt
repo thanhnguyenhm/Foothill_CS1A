@@ -1,0 +1,89 @@
+/*Source program for Assignment 3 for CS 1A
+Written by Thanh Nguyen, 10/11/2015*/
+
+import java.util.Scanner;
+
+public class Lab3
+{
+   public static void main(String[] args)
+   {
+      //declare variables for user input
+      int weight, height;
+      double bmi;
+      String strHealthStatus;
+      
+      //declare object used for input
+      Scanner input = new Scanner(System.in);
+      
+      //string variable to catch all input
+      String strUserInput;
+      
+      //ask for user input
+      System.out.print("Enter your height in inches: ");
+      strUserInput = input.nextLine();
+      height = Integer.parseInt(strUserInput);
+      
+      System.out.print("Enter your weight in pounds: ");
+      strUserInput = input.nextLine();
+      weight = Integer.parseInt(strUserInput);
+      
+      input.close();
+      
+      //test for valid input
+      if (height <= 0)
+      {
+         System.out.println("Error - Invaild height detected!");
+         return;
+      }
+      
+      if (weight <= 0)
+      {
+         System.out.println("Error - Invaild weight detected!");
+         return;
+      }
+      
+      //compute the BMI
+      bmi = weight * 703.0 / (height * height);
+      
+      //classify health status
+      if (bmi < 18.5)
+         strHealthStatus = new String("Underweight");
+      else if (bmi <= 25)
+         strHealthStatus = new String("Optimal");
+      else 
+         strHealthStatus = new String("Overweight");
+      
+      //display output
+      System.out.println("\nYour height is: " + height + " inches"
+            + "\nYour weight is: " + weight + " pounds "
+                  + "\nYour BMI is " + bmi 
+                  + ", indicating that you are in " + strHealthStatus 
+                  + " category. ");
+   }
+}
+
+
+/********************SAMPLE RUN*******************
+----------FIRST RUN
+Enter your height in inches: 63
+Enter your weight in pounds: 155
+
+Your height is: 63 inches
+Your weight is: 155 pounds 
+Your BMI is 27.454018644494834, indicating that you are in Overweight category. 
+
+----------SECOND RUN
+Enter your height in inches: 61
+Enter your weight in pounds: 110
+
+Your height is: 61 inches
+Your weight is: 110 pounds 
+Your BMI is 20.782047836603063, indicating that you are in Optimal category.
+
+----------THIRD RUN
+Enter your height in inches: 60
+Enter your weight in pounds: -130
+Error - Invaild weight detected!
+*****************END SAMPLE RUN*******************/
+
+

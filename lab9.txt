@@ -1,0 +1,422 @@
+/*Source code for Lab assignment 9
+ Written by Thanh Nguyen 11/15/15*/
+
+import java.util.Scanner;
+
+public class Foothill
+{  
+   public static void main(String[] args)
+   {                
+      char charSize;   
+      int intToppings;
+      PizzaOrder order = new PizzaOrder();
+      
+      while(true)//outer loop
+      {
+         //call method to get pizza size from user
+         charSize = getSizeFromUser();
+         
+         //test for valid input
+         if(Character.toUpperCase(charSize) != 'S' &&
+            Character.toUpperCase(charSize) != 'M' &&
+            Character.toUpperCase(charSize) != 'L' &&
+            Character.toUpperCase(charSize) != 'D' &&
+            Character.toUpperCase(charSize) != 'Q')
+            continue;
+         
+         //if user type Q, quit the program
+         else if(Character.toUpperCase(charSize) == 'Q')
+            return;
+         
+         //convert Size from char to int
+         else if(Character.toUpperCase(charSize) == 'S')
+            order.setSize(0);
+         else if(Character.toUpperCase(charSize) == 'M')
+            order.setSize(1);
+         else if(Character.toUpperCase(charSize) == 'L')
+            order.setSize(2);
+         else
+            order.setSize(3);   
+         
+         while(true)//inner loop
+         {     
+            //print current pizza order with size and toppings(if any)
+            System.out.print("\nCurrent Pizza: " + order.stringizeSize()
+                   + order.getToppings() + "\n");
+            
+            displayMainMenu();
+            
+            //get toppings from user
+            Scanner input = new Scanner(System.in);
+            intToppings = input.nextInt();                                                    
+            
+            //if user type 0, complete the order and start a new one
+            if(intToppings == 0)
+            {
+               System.out.println("Thank you!");    
+               order.displayPizza();      
+               order.resetToppings();
+               break;
+            }     
+            
+            else if(!order.addTopping(intToppings))
+               System.out.println("Error detected! Invalid topping choice "
+                     + "or exceed topping limit.");
+         }                    
+      }           
+   }   
+
+   private static void displayMainMenu()
+   {                 
+      System.out.println("Select an item by number (0 when done): ");
+      for(int k = 1; k <= PizzaOrder.TOPPINGS_OFFERED.length; k++)
+      {
+         System.out.println("   " + k + ". "
+               + "" + PizzaOrder.TOPPINGS_OFFERED[k - 1]);         
+      }
+      System.out.print("Selection: ");
+   }
+
+   private static char getSizeFromUser()
+   {
+      char charSize;
+      String strSize;      
+      
+      System.out.print("Size of pizza ('s', 'm', 'l', 'd') "
+            + "or 'q' to quit: ");
+      Scanner input = new Scanner(System.in);
+      strSize = input.next();
+      charSize = strSize.charAt(0);
+      
+      return charSize;
+   }
+}
+
+class PizzaOrder
+{
+   //public static constants
+   public static final String TOPPINGS_OFFERED[] = {"onions", "bell peppers", 
+         "olives", "pepperoni"};
+   public static final double TOPPING_BASE_COST = 2.5;
+   public static final double BASE_PRICE = 10.0;
+   public static final int MAX_TOPPINGS = 10;
+   public static final int DEFAULT_SIZE = 0;
+   
+   //private instance members
+   private int size;
+   private String[] toppings = new String[MAX_TOPPINGS];
+   private int numToppings = 0;
+   
+   //Default constructor
+   PizzaOrder()
+   {
+      size = 0;
+   }
+   
+   //parameter-taking constructor
+   PizzaOrder(int size)
+   {
+      if(!setSize(size))
+         this.size = DEFAULT_SIZE;
+   }
+   
+   //mutator
+   boolean setSize(int size)
+   {
+      if(size >= 0 && size < 4)
+      {
+         this.size = size;
+         return true;
+      }
+      else
+         return false;
+   }
+   
+   //accessor
+   public int getSize() { return size; }
+   
+   boolean addTopping(String topping)
+   {
+      //test for limit of toppings
+      if(numToppings < MAX_TOPPINGS)
+      {
+         toppings[numToppings] = topping;
+         numToppings++;
+         return true;
+      }
+      return false;
+   }
+   
+   boolean addTopping(int n)
+   {      
+      //test for invalid topping input
+      if(n < 1 || n > TOPPINGS_OFFERED.length)
+         return false;
+      else
+         return addTopping(TOPPINGS_OFFERED[n - 1]); 
+   }
+   
+   double getPrice()
+   {
+      double price;
+      
+      price = BASE_PRICE + this.numToppings * TOPPING_BASE_COST;
+      
+      if(this.getSize() == 1)
+         price *= 1.15;
+      else if(this.getSize() == 2)
+         price *= 1.25;
+      else if(this.getSize() == 3)
+         price *= 1.35;
+      
+      return price;
+   }
+   
+   String stringizeSize()
+   {
+      String strSize;
+      
+      if(this.getSize() == 0)
+         strSize = "small";
+      else if(this.getSize() == 1)
+         strSize = "medium";
+      else if(this.getSize() == 2)
+         strSize = "large";
+      else 
+         strSize = "super-duper";
+   
+      return strSize;
+   }
+   
+   String getToppings()
+   {
+      String listToppings = "";
+      
+      for(int k = 0; k < numToppings; k++)
+         listToppings += " + " + toppings[k];
+      
+      return listToppings;
+   }
+   
+   void displayPizza()
+   {
+      String order = "";
+      
+      order = "Your order: " + stringizeSize() + " pizza" 
+            + getToppings() + "\n" + "Total Price: $" + getPrice() + "\n";
+      
+      System.out.println(order);
+   }
+   
+   void resetToppings()
+   {
+      numToppings = 0;
+   }
+}
+
+/************SAMPLE RUN*********************************************
+Size of pizza ('s', 'm', 'l', 'd') or 'q' to quit: 2
+Size of pizza ('s', 'm', 'l', 'd') or 'q' to quit: E
+Size of pizza ('s', 'm', 'l', 'd') or 'q' to quit: rey
+Size of pizza ('s', 'm', 'l', 'd') or 'q' to quit: large
+
+Current Pizza: large
+Select an item by number (0 when done): 
+   1. onions
+   2. bell peppers
+   3. olives
+   4. pepperoni
+Selection: 1
+
+Current Pizza: large + onions
+Select an item by number (0 when done): 
+   1. onions
+   2. bell peppers
+   3. olives
+   4. pepperoni
+Selection: 2
+
+Current Pizza: large + onions + bell peppers
+Select an item by number (0 when done): 
+   1. onions
+   2. bell peppers
+   3. olives
+   4. pepperoni
+Selection: 0
+Thank you!
+Your order: large pizza + onions + bell peppers
+Total Price: $18.75
+
+Size of pizza ('s', 'm', 'l', 'd') or 'q' to quit: Del
+
+Current Pizza: super-duper
+Select an item by number (0 when done): 
+   1. onions
+   2. bell peppers
+   3. olives
+   4. pepperoni
+Selection: 4
+
+Current Pizza: super-duper + pepperoni
+Select an item by number (0 when done): 
+   1. onions
+   2. bell peppers
+   3. olives
+   4. pepperoni
+Selection: 4
+
+Current Pizza: super-duper + pepperoni + pepperoni
+Select an item by number (0 when done): 
+   1. onions
+   2. bell peppers
+   3. olives
+   4. pepperoni
+Selection: 1
+
+Current Pizza: super-duper + pepperoni + pepperoni + onions
+Select an item by number (0 when done): 
+   1. onions
+   2. bell peppers
+   3. olives
+   4. pepperoni
+Selection: 6
+Error detected! Invalid topping choice or exceed topping limit.
+
+Current Pizza: super-duper + pepperoni + pepperoni + onions
+Select an item by number (0 when done): 
+   1. onions
+   2. bell peppers
+   3. olives
+   4. pepperoni
+Selection: 0
+Thank you!
+Your order: super-duper pizza + pepperoni + pepperoni + onions
+Total Price: $23.625
+
+Size of pizza ('s', 'm', 'l', 'd') or 'q' to quit: sun
+
+Current Pizza: small
+Select an item by number (0 when done): 
+   1. onions
+   2. bell peppers
+   3. olives
+   4. pepperoni
+Selection: 3
+
+Current Pizza: small + olives
+Select an item by number (0 when done): 
+   1. onions
+   2. bell peppers
+   3. olives
+   4. pepperoni
+Selection: 2
+
+Current Pizza: small + olives + bell peppers
+Select an item by number (0 when done): 
+   1. onions
+   2. bell peppers
+   3. olives
+   4. pepperoni
+Selection: 1
+
+Current Pizza: small + olives + bell peppers + onions
+Select an item by number (0 when done): 
+   1. onions
+   2. bell peppers
+   3. olives
+   4. pepperoni
+Selection: 4
+
+Current Pizza: small + olives + bell peppers + onions + pepperoni
+Select an item by number (0 when done): 
+   1. onions
+   2. bell peppers
+   3. olives
+   4. pepperoni
+Selection: 5
+Error detected! Invalid topping choice or exceed topping limit.
+
+Current Pizza: small + olives + bell peppers + onions + pepperoni
+Select an item by number (0 when done): 
+   1. onions
+   2. bell peppers
+   3. olives
+   4. pepperoni
+Selection: 6
+Error detected! Invalid topping choice or exceed topping limit.
+
+Current Pizza: small + olives + bell peppers + onions + pepperoni
+Select an item by number (0 when done): 
+   1. onions
+   2. bell peppers
+   3. olives
+   4. pepperoni
+Selection: 4
+
+Current Pizza: small + olives + bell peppers + onions + pepperoni + pepperoni
+Select an item by number (0 when done): 
+   1. onions
+   2. bell peppers
+   3. olives
+   4. pepperoni
+Selection: 3
+
+Current Pizza: small + olives + bell peppers + onions + pepperoni + pepperoni + olives
+Select an item by number (0 when done): 
+   1. onions
+   2. bell peppers
+   3. olives
+   4. pepperoni
+Selection: 2
+
+Current Pizza: small + olives + bell peppers + onions + pepperoni + pepperoni + olives + bell peppers
+Select an item by number (0 when done): 
+   1. onions
+   2. bell peppers
+   3. olives
+   4. pepperoni
+Selection: 1
+
+Current Pizza: small + olives + bell peppers + onions + pepperoni + pepperoni + olives + bell peppers + onions
+Select an item by number (0 when done): 
+   1. onions
+   2. bell peppers
+   3. olives
+   4. pepperoni
+Selection: 4
+
+Current Pizza: small + olives + bell peppers + onions + pepperoni + pepperoni + olives + bell peppers + onions + pepperoni
+Select an item by number (0 when done): 
+   1. onions
+   2. bell peppers
+   3. olives
+   4. pepperoni
+Selection: 5
+Error detected! Invalid topping choice or exceed topping limit.
+
+Current Pizza: small + olives + bell peppers + onions + pepperoni + pepperoni + olives + bell peppers + onions + pepperoni
+Select an item by number (0 when done): 
+   1. onions
+   2. bell peppers
+   3. olives
+   4. pepperoni
+Selection: 0
+Thank you!
+Your order: small pizza + olives + bell peppers + onions + pepperoni + pepperoni + olives + bell peppers + onions + pepperoni
+Total Price: $32.5
+
+Size of pizza ('s', 'm', 'l', 'd') or 'q' to quit: moon
+
+Current Pizza: medium
+Select an item by number (0 when done): 
+   1. onions
+   2. bell peppers
+   3. olives
+   4. pepperoni
+Selection: 0
+Thank you!
+Your order: medium pizza
+Total Price: $11.5
+
+Size of pizza ('s', 'm', 'l', 'd') or 'q' to quit: q
+*******************END SAMPLE RUN**************************************/

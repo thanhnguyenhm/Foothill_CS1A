@@ -1,0 +1,134 @@
+/*Source code for Assignment Lab 5
+Written by Thanh Nguyen 10/25/15*/
+
+import java.util.Scanner;
+
+public class Foothill
+{
+   //main method
+   public static void main(String[] args)
+   {
+      String targetStr, pigLatinStr, turkeyIrishStr;
+      int numVowel;
+      
+      targetStr = getString();  
+      pigLatinStr = pigLatin(targetStr);
+      turkeyIrishStr = turkeyIrish(targetStr);
+      numVowel = countVowel(targetStr);
+      
+      //output      
+      System.out.println("\nWord made into Pig Latin: \n"
+            + pigLatinStr);
+      System.out.println("\nWord made into Turkey Irish:: \n"
+            + turkeyIrishStr);
+      System.out.println("\n# of vowels in the word: "
+            + numVowel);      
+   }
+   
+   //method to get input, return value to main
+   public static String getString()
+   {
+      String myStr;
+      Scanner input = new Scanner(System.in);
+      
+      System.out.print("Please enter a word ");
+      
+      //filter input until at least 4 letters
+      do
+      {
+         System.out.print(">= 4 letters: ");
+         myStr = input.next();
+      }
+      while (myStr.length() < 4);   
+      
+      input.close();
+      
+      return myStr;
+   }
+   
+   //method to convert word to Pig Latin
+   public static String pigLatin(String theString)
+   {
+      String myStr = new String("");            
+      
+      for(int k = 1; k < theString.length(); k++ )
+      {
+         myStr += theString.charAt(k);
+      }
+      
+      myStr = myStr + theString.charAt(0) + "ay";
+      
+      return myStr;
+   }
+   
+   //method to convert word to turkeyIrish
+   public static String turkeyIrish(String theString)
+   {
+      String myStr = new String("");
+            
+      for(int k = 0; k < theString.length(); k++)
+      {         
+         if(Character.toUpperCase(theString.charAt(k)) == 'A' ||
+            Character.toUpperCase(theString.charAt(k)) == 'E' ||
+            Character.toUpperCase(theString.charAt(k)) == 'I' ||
+            Character.toUpperCase(theString.charAt(k)) == 'O' ||
+            Character.toUpperCase(theString.charAt(k)) == 'U')
+         myStr += "ab";  
+         myStr += theString.charAt(k);
+      }
+      
+      return myStr;
+   }
+   
+   //method to count number of vowels
+   public static int countVowel(String theString)
+   {   
+      int count = 0;
+      
+      for(int k = 0; k < theString.length(); k++)
+      {                  
+         if(Character.toUpperCase(theString.charAt(k)) == 'A' ||
+            Character.toUpperCase(theString.charAt(k)) == 'E' ||
+            Character.toUpperCase(theString.charAt(k)) == 'I' ||
+            Character.toUpperCase(theString.charAt(k)) == 'O' ||
+            Character.toUpperCase(theString.charAt(k)) == 'U')
+         count++;         
+      }
+      
+      return count;
+   }
+}
+
+/****************SAMPLE RUN********************
+ * Please enter a word >= 4 letters: thanh
+
+Word made into Pig Latin: 
+hanhtay
+
+Word made into Turkey Irish:: 
+thabanh
+
+# of vowels in the word: 1
+--------------------------------------------
+Please enter a word >= 4 letters: sue
+>= 4 letters: su
+>= 4 letters: suzy
+
+Word made into Pig Latin: 
+uzysay
+
+Word made into Turkey Irish:: 
+sabuzy
+
+# of vowels in the word: 1
+--------------------------------------------
+Please enter a word >= 4 letters: thuyen
+
+Word made into Pig Latin: 
+huyentay
+
+Word made into Turkey Irish:: 
+thabuyaben
+
+# of vowels in the word: 2
+************END SAMPLE RUN********************/

@@ -1,0 +1,196 @@
+/*Source code for Lab assignment 8
+ Written by Thanh Nguyen 11/15/15*/
+
+import java.text.NumberFormat;
+import java.util.Locale;
+ 
+public class Foothill
+{
+   public static void main(String[] args)
+   {
+      double value;
+      
+      //instantiate 4 objects
+      DateProfile[] applicant = new DateProfile[4];
+      applicant[0] = new DateProfile('F', 'M', 6, 4, "Tiffany Maxwell");
+      applicant[2] = new DateProfile('F', 'M', 1, 6, "Summer Finn");
+      applicant[3] = new DateProfile('M', 'F', 9, 7, "Tom Hansen");
+      
+      applicant[1] = new DateProfile();
+      applicant[1].setName("Pat Solitano Jr.");
+      applicant[1].setGender('M');
+      applicant[1].setSearchGender('F');
+      applicant[1].setRomance(2);
+      applicant[1].setFinance(3);
+      
+      NumberFormat tidy = NumberFormat.getInstance(Locale.US);
+      tidy.setMaximumFractionDigits(3);
+            
+      for(int i = 0; i < 4; i++)
+      {
+         System.out.println(applicant[i].getName());
+         
+         for(int k = 0; k < 4; k++)
+         {
+            value = applicant[i].fitValue(applicant[k]);
+            System.out.println("\t" + applicant[k].getName() + " fit: "
+                  + "" + tidy.format(value));
+         }
+      }
+   }     
+}
+
+class DateProfile
+{
+   //private instance members
+   private char gender;
+   private char searchGender;
+   private int romance;
+   private int finance;
+   private String name;
+   
+   //public class static constants
+   public static final char DEFAULT_CHAR = 'F';
+   public static final int DEFAULT_INT = 1;
+   public static final String DEFAULT_STRING = "(undefined)";
+   public static final int MIN_INT = 1;
+   public static final int MAX_INT = 10;
+   
+   //default constructor
+   DateProfile()
+   {
+      gender = DEFAULT_CHAR;
+      searchGender = DEFAULT_CHAR;
+      romance = DEFAULT_INT;
+      finance = DEFAULT_INT;
+      name = DEFAULT_STRING;
+   }
+   
+   //parameter-taking constructor
+   DateProfile(char gen, char searchGen, int romance, int finance, String name)
+   {
+      if(!setGender(gen))
+         this.gender = DEFAULT_CHAR;
+      if(!setSearchGender(searchGen))
+         this.searchGender = DEFAULT_CHAR;
+      if(!setRomance(romance))
+         this.romance = DEFAULT_INT;
+      if(!setFinance(finance))
+         this.finance = DEFAULT_INT;
+      if(!setName(name))
+         this.name = DEFAULT_STRING;
+   }
+   
+   //accessors
+   char getGender() { return gender; }
+   char getSearchGender() { return searchGender; }
+   int getRomance() { return romance; }
+   int getFinance() { return finance; }
+   String getName() { return name; }
+   
+   //mutators  
+   boolean setGender(char gender)
+   {
+      if(gender == 'M' || gender == 'F')
+      {         
+         this.gender = gender;
+         return true;
+      }        
+      return false;
+   }
+   
+   boolean setSearchGender(char searchGender)
+   {
+      if(searchGender == 'M' || searchGender == 'F')
+      {         
+         this.searchGender = searchGender;
+         return true;
+      }       
+      return false;
+   }   
+   
+   boolean setRomance(int romance)
+   {
+      if(romance < MIN_INT || romance > MAX_INT)
+         return false;
+      this.romance = romance;
+      return true;
+   }
+   
+   boolean setFinance(int finance)
+   {
+      if(finance < MIN_INT || finance > MAX_INT)
+         return false;
+      this.finance = finance;
+      return true;
+   }
+   
+   boolean setName(String name)
+   {
+      if(name == "")
+         return false;
+      this.name = name;
+      return true;
+   }
+   
+   //instance method to return final fit value
+   public double fitValue(DateProfile partner)
+   {
+      double value;
+            
+      value = this.determineGenderFit(partner)
+            * this.determineRomanceFit(partner)
+            * this.determineFinanceFit(partner);
+      
+      return value;
+   }
+   
+   //instance method to determine gender fit value
+   private double determineGenderFit(DateProfile partner)
+   {     
+      if (this.gender == partner.searchGender &&
+            this.searchGender == partner.gender)
+         return 1.0;
+      else
+         return 0.0;        
+   }
+   
+   //instance method to determine romance fit value
+   private double determineRomanceFit(DateProfile partner)
+   {
+      double value;      
+      value = (1 - ((double)(Math.abs(this.romance - partner.romance)) / 10));     
+      return value;
+   }
+
+   //instance method to determine finance fit value
+   private double determineFinanceFit(DateProfile partner)
+   {
+      double value;      
+      value = (1 - ((double)(Math.abs(this.finance - partner.finance)) / 10));     
+      return value;
+   }   
+}
+
+/********************************SAMPLE RUN************************
+Tiffany Maxwell
+   Tiffany Maxwell fit: 0
+   Pat Solitano Jr. fit: 0.54
+   Summer Finn fit: 0
+   Tom Hansen fit: 0.49
+Pat Solitano Jr.
+   Tiffany Maxwell fit: 0.54
+   Pat Solitano Jr. fit: 0
+   Summer Finn fit: 0.63
+   Tom Hansen fit: 0
+Summer Finn
+   Tiffany Maxwell fit: 0
+   Pat Solitano Jr. fit: 0.63
+   Summer Finn fit: 0
+   Tom Hansen fit: 0.18
+Tom Hansen
+   Tiffany Maxwell fit: 0.49
+   Pat Solitano Jr. fit: 0
+   Summer Finn fit: 0.18
+   Tom Hansen fit: 0
+********************END SAMPLE RUN***********************************/

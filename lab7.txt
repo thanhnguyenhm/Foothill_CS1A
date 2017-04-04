@@ -1,0 +1,199 @@
+/*Source code for Lab Assignment 7
+ Written by Thanh Nguyen - 11/08/15*/
+ 
+public class Foothill
+{
+   public static void main(String[] args)
+   {
+      String mySong;
+      iTunes song1, song2, song3, song4;
+      
+      //create and display song1
+      song1 = new iTunes("High by the beach", "Lana", 355, 258000);      
+      mySong = song1.toString();
+      song1.display(mySong);
+      //mutator song1 and display again
+      song1.setArtist("Lana Del Rey");
+      mySong = song1.toString();
+      song1.display(mySong);
+      System.out.println();
+      
+      //create and display song2
+      song2 = new iTunes();
+      mySong = song2.toString();
+      song2.display(mySong);
+      //mutator song2 and display again
+      song2.setName("Blue Jeans");
+      song2.setArtist(song1.getArtist());
+      song2.setTotalTime(210000);
+      song2.setBitrate(320);      
+      mySong = song2.toString();
+      song2.display(mySong);
+      System.out.println();
+      
+      //create and display song3
+      song3 = new iTunes("Hello", "Adele", song2.getBitrate(), 296000);
+      mySong = song3.toString();
+      song3.display(mySong);
+      //mutate song3 and display again
+      song3.setBitrate(255);
+      mySong = song3.toString();
+      song3.display(mySong);
+      System.out.println();
+      
+      //create and display song4
+      song4 = new iTunes();
+      mySong = song4.toString();
+      song4.display(mySong);
+      //mutate song4 and display again
+      song4.setName("Little Talks");
+      song4.setArtist("Of Monsters And Men");
+      song4.setBitrate(32); //invaild value will be set to default
+      song4.setTotalTime(-168000); //invaild value will be set to default
+      mySong = song4.toString();
+      song4.display(mySong);
+      System.out.println();
+      
+      // test a couple mutators for data filtering
+      if (!song1.setName(""))
+         System.out.println( "Unable to set name to NULL" );
+      else
+         System.out.println( "Name set to NULL." );
+
+      if (!song2.setBitrate(800))
+         System.out.println( "Unable to set bitrate to 800." );
+      else
+         System.out.println( "bitrate set to 800." );
+      System.out.println();
+
+      // test a few accessors
+      System.out.println( "Song #1's name is " + song1.getName() );
+      System.out.println( "The minimum valid string is " + iTunes.MIN_STR_LENGTH);
+      System.out.println( "The maximum valid bitrate is " + iTunes.MAX_BITRATE);
+   }
+}
+
+class iTunes
+{
+   //private class instance members
+   private String name;
+   private String artist;
+   private int bitrate;
+   private int totalTime;
+   
+   //public class static constants
+   public static final int MIN_BITRATE = 64;
+   public static final int MAX_BITRATE = 705;
+   public static final int MIN_STR_LENGTH = 1;
+   public static final int MAX_STR_LENGTH = 80;
+   public static final int MIN_PLAY_TIME = 1000;
+   public static final int MAX_PLAY_TIME = 1000 * 60 * 60;
+   public static final int DEFAULT_BITRATE = 64;
+   public static final int DEFAULT_PLAY_TIME = 1000;
+   public static final String DEFAULT_STRING = "(undefined)";
+   
+   //constructor
+   iTunes()
+   {
+      name = DEFAULT_STRING;
+      artist = DEFAULT_STRING;
+      bitrate = DEFAULT_BITRATE;
+      totalTime = DEFAULT_PLAY_TIME;
+   }
+   
+   //parameter-taking constructor
+   iTunes(String name, String artist, int bitrate, int totalTime)
+   {
+      if(!setName(name))
+         this.name = DEFAULT_STRING;
+      if(!setArtist(artist))
+         this.artist = DEFAULT_STRING;
+      if(!setBitrate(bitrate))
+         this.bitrate = DEFAULT_BITRATE;
+      if(!setTotalTime(totalTime))
+         this.totalTime = DEFAULT_PLAY_TIME;      
+   }
+   
+   //mutators
+   boolean setName(String name)
+   {
+      if(name.length() < MIN_STR_LENGTH || name.length() > MAX_STR_LENGTH)
+         return false;
+      this.name = name;
+      return true;
+   }
+   
+   boolean setArtist(String artist)
+   {
+      if(artist.length() < MIN_STR_LENGTH || artist.length() > MAX_STR_LENGTH)
+         return false;
+      this.artist = artist;
+      return true;
+   }
+   
+   boolean setBitrate(int bitrate)
+   {
+      if(bitrate < MIN_BITRATE || bitrate > MAX_BITRATE)
+         return false;
+      this.bitrate = bitrate;
+      return true;
+   }
+   
+   boolean setTotalTime(int totalTime)
+   {
+      if(totalTime < MIN_PLAY_TIME || totalTime > MAX_PLAY_TIME)
+         return false;
+      this.totalTime = totalTime;
+      return true;
+   }
+   
+   //accessors
+   String getName() { return name; }
+   String getArtist() { return artist; }
+   int getBitrate() { return bitrate; }
+   int getTotalTime() { return totalTime; }
+   
+   //method that returns a String which contains 
+   //all the information of the iTunes object
+   public String toString()
+   {
+      String myStr;
+      int minutes, seconds;
+      
+      //convert milliseconds to minutes and seconds
+      minutes = (this.totalTime / 1000) / 60;
+      seconds = (this.totalTime / 1000) % 60;
+      
+      myStr = "Title: " + this.name + " / Artist: " + this.artist + ""
+            + " / Playing Time: " + minutes + " minutes " + seconds + ""
+                  + " seconds / Bit Rate: " + this.bitrate + "k";
+      
+      return myStr;
+   }
+   
+   void display(String toString)
+   {
+      System.out.println(toString);
+   }      
+}
+
+/*****************SAMPLE RUN*********************************************
+Title: High by the beach / Artist: Lana / Playing Time: 4 minutes 18 seconds / Bit Rate: 355k
+Title: High by the beach / Artist: Lana Del Rey / Playing Time: 4 minutes 18 seconds / Bit Rate: 355k
+
+Title: (undefined) / Artist: (undefined) / Playing Time: 0 minutes 1 seconds / Bit Rate: 64k
+Title: Blue Jeans / Artist: Lana Del Rey / Playing Time: 3 minutes 30 seconds / Bit Rate: 320k
+
+Title: Hello / Artist: Adele / Playing Time: 4 minutes 56 seconds / Bit Rate: 320k
+Title: Hello / Artist: Adele / Playing Time: 4 minutes 56 seconds / Bit Rate: 255k
+
+Title: (undefined) / Artist: (undefined) / Playing Time: 0 minutes 1 seconds / Bit Rate: 64k
+Title: Little Talks / Artist: Of Monsters And Men / Playing Time: 0 minutes 1 seconds / Bit Rate: 64k
+
+Unable to set name to NULL
+Unable to set bitrate to 800.
+
+Song #1's name is High by the beach
+The minimum valid string is 1
+The maximum valid bitrate is 705
+*************************************************************************/
